@@ -51,19 +51,27 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(200, 170, 130, 0.7);
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.2s ease-out forwards;
+    }
   </style>
 </head>
 <body class="h-[100dvh] bg-gradient-to-br from-[#f2efe9] via-[#e8dcc5] to-[#d6c4a3] text-slate-800 flex flex-col items-center justify-center p-3 sm:p-5 antialiased overflow-hidden">
 
   <!-- Main Chat Container (Floating) -->
-  <div class="w-full max-w-lg h-[92vh] sm:h-[800px] bg-white/95 backdrop-blur-md rounded-[2.5rem] border border-white/60 flex flex-col relative floating-box overflow-hidden">
+  <div class="w-full max-w-lg h-[92vh] sm:h-[800px] bg-white/95 backdrop-blur-md rounded-[2.5rem] border border-white/60 flex flex-col relative floating-box overflow-hidden shadow-2xl">
 
     <!-- Header App -->
     <header class="px-5 py-4 bg-white/80 backdrop-blur-lg border-b border-amber-100/80 flex items-center justify-between shrink-0 z-10">
       <div class="flex items-center space-x-3.5">
         <div class="relative flex -space-x-2.5 overflow-hidden p-0.5">
-          <img id="headerAvatar1" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23f59e0b'/><text x='50' y='64' font-size='50' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>T</text></svg>" class="inline-block h-9 w-9 rounded-full ring-2 ring-white object-cover shadow-sm">
-          <img id="headerAvatar2" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%2314b8a6'/><text x='50' y='64' font-size='50' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>R</text></svg>" class="inline-block h-9 w-9 rounded-full ring-2 ring-white object-cover shadow-sm">
+          <img id="headerAvatar1" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23f59e0b'/><text x='50' y='64' font-size='50' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>T</text></svg>" class="inline-block h-9 w-9 rounded-full ring-2 ring-white object-cover shadow-sm" alt="Avatar T">
+          <img id="headerAvatar2" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%2314b8a6'/><text x='50' y='64' font-size='50' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>R</text></svg>" class="inline-block h-9 w-9 rounded-full ring-2 ring-white object-cover shadow-sm" alt="Avatar R">
         </div>
         <div>
           <h1 class="text-sm font-bold text-amber-950 tracking-wide flex items-center gap-1.5">
@@ -85,7 +93,7 @@
           </svg>
         </button>
 
-        <button onclick="window.clearChat()" title="Hapus Riwayat Chat" class="p-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-500 border border-rose-100 transition shadow-sm">
+        <button onclick="window.openClearModal()" title="Hapus Riwayat Chat" class="p-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-500 border border-rose-100 transition shadow-sm">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
           </svg>
@@ -101,26 +109,26 @@
     <!-- Image Preview Bar -->
     <div id="imagePreviewContainer" class="hidden px-5 py-3 bg-amber-50/95 border-t border-amber-100 flex items-center justify-between z-10">
       <div class="flex items-center space-x-3">
-        <img id="imagePreview" src="" class="w-12 h-12 object-cover rounded-xl border-2 border-white shadow-sm">
+        <img id="imagePreview" src="" class="w-12 h-12 object-cover rounded-xl border-2 border-white shadow-sm" alt="Preview Pratinjau">
         <span class="text-xs text-amber-900/80 font-medium">Gambar siap dikirim...</span>
       </div>
-      <button onclick="window.cancelImage()" class="text-amber-700 hover:text-rose-500 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-rose-50 transition">✕ Batal</button>
+      <button type="button" onclick="window.cancelImage()" class="text-amber-700 hover:text-rose-500 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-rose-50 transition">✕ Batal</button>
     </div>
 
     <!-- Emoji Bar -->
     <div id="emojiBar" class="hidden px-4 py-3 bg-white/95 border-t border-amber-100 flex flex-wrap gap-2.5 text-xl justify-center z-10">
-      <button onclick="window.addEmoji('😊')" class="hover:scale-125 transition-transform duration-200">😊</button>
-      <button onclick="window.addEmoji('😂')" class="hover:scale-125 transition-transform duration-200">😂</button>
-      <button onclick="window.addEmoji('✨')" class="hover:scale-125 transition-transform duration-200">✨</button>
-      <button onclick="window.addEmoji('👍')" class="hover:scale-125 transition-transform duration-200">👍</button>
-      <button onclick="window.addEmoji('🔥')" class="hover:scale-125 transition-transform duration-200">🔥</button>
-      <button onclick="window.addEmoji('🙏')" class="hover:scale-125 transition-transform duration-200">🙏</button>
-      <button onclick="window.addEmoji('🎉')" class="hover:scale-125 transition-transform duration-200">🎉</button>
-      <button onclick="window.addEmoji('👀')" class="hover:scale-125 transition-transform duration-200">👀</button>
-      <button onclick="window.addEmoji('🤎')" class="hover:scale-125 transition-transform duration-200">🤎</button>
-      <button onclick="window.addEmoji('🤩')" class="hover:scale-125 transition-transform duration-200">🤩</button>
-      <button onclick="window.addEmoji('🥰')" class="hover:scale-125 transition-transform duration-200">🥰</button>
-      <button onclick="window.addEmoji('☕')" class="hover:scale-125 transition-transform duration-200">☕</button>
+      <button type="button" onclick="window.addEmoji('😊')" class="hover:scale-125 transition-transform duration-200">😊</button>
+      <button type="button" onclick="window.addEmoji('😂')" class="hover:scale-125 transition-transform duration-200">😂</button>
+      <button type="button" onclick="window.addEmoji('✨')" class="hover:scale-125 transition-transform duration-200">✨</button>
+      <button type="button" onclick="window.addEmoji('👍')" class="hover:scale-125 transition-transform duration-200">👍</button>
+      <button type="button" onclick="window.addEmoji('🔥')" class="hover:scale-125 transition-transform duration-200">🔥</button>
+      <button type="button" onclick="window.addEmoji('🙏')" class="hover:scale-125 transition-transform duration-200">🙏</button>
+      <button type="button" onclick="window.addEmoji('🎉')" class="hover:scale-125 transition-transform duration-200">🎉</button>
+      <button type="button" onclick="window.addEmoji('👀')" class="hover:scale-125 transition-transform duration-200">👀</button>
+      <button type="button" onclick="window.addEmoji('🤎')" class="hover:scale-125 transition-transform duration-200">🤎</button>
+      <button type="button" onclick="window.addEmoji('🤩')" class="hover:scale-125 transition-transform duration-200">🤩</button>
+      <button type="button" onclick="window.addEmoji('🥰')" class="hover:scale-125 transition-transform duration-200">🥰</button>
+      <button type="button" onclick="window.addEmoji('☕')" class="hover:scale-125 transition-transform duration-200">☕</button>
     </div>
 
     <!-- Sender Switcher Bar (Pilih Peran Online) -->
@@ -128,7 +136,7 @@
       <div class="flex items-center space-x-2.5">
         <span class="text-[11px] text-amber-900/60 font-semibold uppercase tracking-wider">Peran Saya:</span>
         <button id="activeUserBadge" onclick="window.toggleSender()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border hover:scale-105 transition shadow-sm">
-          <img id="activeUserAvatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23f59e0b'/><text x='50' y='64' font-size='50' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>T</text></svg>" class="w-4 h-4 rounded-full object-cover">
+          <img id="activeUserAvatar" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23f59e0b'/><text x='50' y='64' font-size='50' font-family='sans-serif' font-weight='bold' fill='white' text-anchor='middle'>T</text></svg>" class="w-4 h-4 rounded-full object-cover" alt="Avatar Pengirim">
           <span id="activeUserName">t (Kanan)</span>
         </button>
       </div>
@@ -152,7 +160,7 @@
         <!-- Upload Image -->
         <label class="p-2.5 text-amber-700/60 hover:text-amber-600 hover:bg-amber-50 rounded-2xl cursor-pointer transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-          <input type="file" accept="image/*" class="hidden" onchange="window.handleImageSelect(event)">
+          <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="window.handleImageSelect(event)">
         </label>
 
         <!-- Text Input -->
@@ -173,6 +181,23 @@
 
   </div>
 
+  <!-- Custom Clear Confirmation Modal -->
+  <div id="clearConfirmModal" class="fixed inset-0 bg-amber-950/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl border border-amber-100 text-center animate-fade-in">
+      <div class="w-12 h-12 bg-rose-100 rounded-2xl flex items-center justify-center text-rose-500 mx-auto mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+        </svg>
+      </div>
+      <h3 class="text-base font-bold text-amber-950 mb-1">Hapus Semua Pesan?</h3>
+      <p class="text-xs text-amber-800/70 mb-5">Tindakan ini akan menghapus seluruh riwayat percakapan secara permanen.</p>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="window.closeClearModal()" class="flex-1 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl text-xs font-semibold transition">Batal</button>
+        <button type="button" onclick="window.confirmClearChat()" class="flex-1 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-md transition">Hapus</button>
+      </div>
+    </div>
+  </div>
+
   <!-- FIREBASE & LOKAL INTEGRATION SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -182,31 +207,30 @@
     let isOnlineMode = false;
     let app, auth, db, currentUser, unsubscribeMessages;
     
-    // Default App ID untuk chat ini
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'aplikasi-chat-cream-github';
+    // Gunakan App ID lingkungan jika ada
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'aplikasi-chat-cream-tiara';
 
-    // -------------------------------------------------------------
-    // SETUP KONFIGURASI DATABASE (SUDAH DIMASUKKAN)
-    // -------------------------------------------------------------
-    let firebaseConfig = {};
+    // Konfigurasi default fallback
+    const defaultFirebaseConfig = {
+      apiKey: "AIzaSyDz9m4Q2SiZ2DRfJzdHZMjFR8Tg5wPlMX0",
+      authDomain: "chat-43862.firebaseapp.com",
+      projectId: "chat-43862",
+      storageBucket: "chat-43862.firebasestorage.app",
+      messagingSenderId: "872609711287",
+      appId: "1:872609711287:web:0df01263a3aca4e675b932",
+      measurementId: "G-XTGHWEV01W"
+    };
 
+    let firebaseConfig = defaultFirebaseConfig;
     if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-      firebaseConfig = JSON.parse(__firebase_config);
-    } 
-    else {
-      firebaseConfig = {
-        apiKey: "AIzaSyDz9m4Q2SiZ2DRfJzdHZMjFR8Tg5wPlMX0",
-        authDomain: "chat-43862.firebaseapp.com",
-        projectId: "chat-43862",
-        storageBucket: "chat-43862.firebasestorage.app",
-        messagingSenderId: "872609711287",
-        appId: "1:872609711287:web:0df01263a3aca4e675b932",
-        measurementId: "G-XTGHWEV01W"
-      };
+      try {
+        firebaseConfig = typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
+      } catch (e) {
+        console.warn("Gagal memuat firebase config custom, menggunakan default:", e);
+      }
     }
-    // -------------------------------------------------------------
 
-    // State Aplikasi Dasar
+    // State Aplikasi
     const state = {
       activeSender: 'user1',
       users: {
@@ -236,76 +260,85 @@
       messages: []
     };
 
-    // Inisialisasi Database
-    try {
-      if (firebaseConfig.apiKey) {
+    // Inisialisasi Firebase & Alur Autentikasi
+    async function initFirebaseApp() {
+      try {
+        if (!firebaseConfig || !firebaseConfig.apiKey) {
+          fallbackToLocalMode();
+          return;
+        }
+
         app = initializeApp(firebaseConfig);
         auth = getAuth(app);
         db = getFirestore(app);
-        isOnlineMode = true; 
-      } else {
-        console.warn("Konfigurasi Firebase belum diisi. Menggunakan mode lokal (offline).");
-      }
-    } catch(e) {
-      console.error("Error inisialisasi Firebase:", e);
-    }
 
-    if (isOnlineMode) {
-      // PROSES ONLINE
-      const initAuth = async () => {
-        try {
-          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-          } else {
-            await signInAnonymously(auth);
+        // Pasang listener status auth
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            currentUser = user;
+            isOnlineMode = true;
+            updateConnectionStatusUI(true);
+            enableInputs();
+            loadMessagesOnline();
           }
-        } catch (error) {
-          console.error("Gagal auth:", error);
-          fallbackToLocalMode();
-        }
-      };
+        });
 
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          currentUser = user;
-          document.getElementById('connectionStatus').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online`;
-          document.getElementById('connectionStatus').className = "flex items-center gap-1 text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-2 py-0.5 rounded-full border border-emerald-200";
-          enableInputs();
-          loadMessagesOnline();
+        // Eksekusi Login
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
         } else {
-          fallbackToLocalMode();
+          await signInAnonymously(auth);
         }
-      });
 
-      initAuth();
-    } else {
-      // PROSES LOKAL (OFFLINE)
-      fallbackToLocalMode();
+      } catch (error) {
+        console.warn("Gagal terhubung ke Firebase, otomatis beralih ke Mode Lokal:", error);
+        fallbackToLocalMode();
+      }
     }
 
     function fallbackToLocalMode() {
       isOnlineMode = false;
-      document.getElementById('connectionStatus').innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Mode Lokal (Offline)`;
-      document.getElementById('connectionStatus').className = "flex items-center gap-1 text-[10px] bg-amber-100 text-amber-700 font-semibold px-2 py-0.5 rounded-full border border-amber-200";
+      updateConnectionStatusUI(false);
       enableInputs();
       loadMessagesLocal();
     }
 
+    function updateConnectionStatusUI(online) {
+      const statusEl = document.getElementById('connectionStatus');
+      if (!statusEl) return;
+      if (online) {
+        statusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online`;
+        statusEl.className = "flex items-center gap-1 text-[10px] bg-emerald-100 text-emerald-700 font-semibold px-2 py-0.5 rounded-full border border-emerald-200";
+      } else {
+        statusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Mode Lokal (Offline)`;
+        statusEl.className = "flex items-center gap-1 text-[10px] bg-amber-100 text-amber-700 font-semibold px-2 py-0.5 rounded-full border border-amber-200";
+      }
+    }
+
     function enableInputs() {
-      document.getElementById('messageInput').disabled = false;
-      document.getElementById('sendBtn').disabled = false;
+      const input = document.getElementById('messageInput');
+      const sendBtn = document.getElementById('sendBtn');
+      if (input) input.disabled = false;
+      if (sendBtn) sendBtn.disabled = false;
       updateUIForActiveUser();
     }
 
-    // FUNGSI MENGAMBIL PESAN
+    // FUNGSI MENGAMBIL PESAN DARI FIRESTORE
     function loadMessagesOnline() {
-      if (!currentUser) return;
+      if (!currentUser || !db) return;
+      
       const messagesRef = collection(db, 'artifacts', appId, 'public', 'data', 'chat_messages_cream');
       
+      if (unsubscribeMessages) unsubscribeMessages();
+
       unsubscribeMessages = onSnapshot(messagesRef, (snapshot) => {
         const msgs = [];
-        snapshot.forEach(doc => { msgs.push({ docId: doc.id, ...doc.data() }); });
-        msgs.sort((a, b) => a.timestamp - b.timestamp);
+        snapshot.forEach(docSnap => { 
+          msgs.push({ docId: docSnap.id, ...docSnap.data() }); 
+        });
+        
+        // Urutkan berdasarkan timestamp waktu di memori JavaScript
+        msgs.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
         
         const isNewMessageAdded = msgs.length > state.messages.length && state.messages.length > 0;
         state.messages = msgs;
@@ -313,10 +346,13 @@
 
         if (isNewMessageAdded) {
           const lastMsg = msgs[msgs.length - 1];
-          if (lastMsg.senderId !== state.activeSender) playSound();
+          if (lastMsg && lastMsg.senderId !== state.activeSender) {
+            playSound();
+          }
         }
       }, (error) => {
-        console.error("Gagal ambil pesan online:", error);
+        console.warn("Gagal mengambil pesan real-time, beralih ke lokal:", error);
+        fallbackToLocalMode();
       });
     }
 
@@ -332,9 +368,10 @@
 
     // FUNGSI MENGIRIM PESAN
     window.sendMessage = async function(event) {
-      event.preventDefault();
+      if (event) event.preventDefault();
       
       const input = document.getElementById('messageInput');
+      if (!input) return;
       const text = input.value.trim();
       const image = state.selectedImage;
 
@@ -351,19 +388,23 @@
 
       input.value = '';
       window.cancelImage();
-      document.getElementById('emojiBar').classList.add('hidden');
+      const emojiBar = document.getElementById('emojiBar');
+      if (emojiBar) emojiBar.classList.add('hidden');
 
-      if (isOnlineMode && currentUser) {
-        // Kirim ke server
+      if (isOnlineMode && currentUser && db) {
         try {
           const messagesRef = collection(db, 'artifacts', appId, 'public', 'data', 'chat_messages_cream');
           await addDoc(messagesRef, newMessage);
           playSound();
         } catch (error) {
-          console.error("Gagal mengirim online", error);
+          console.error("Gagal mengirim pesan secara online, menyimpan secara lokal:", error);
+          newMessage.docId = 'local_' + Date.now();
+          state.messages.push(newMessage);
+          localStorage.setItem('chat_cream_messages', JSON.stringify(state.messages));
+          renderMessages();
+          playSound();
         }
       } else {
-        // Simpan secara lokal
         newMessage.docId = 'local_' + Date.now();
         state.messages.push(newMessage);
         localStorage.setItem('chat_cream_messages', JSON.stringify(state.messages));
@@ -372,18 +413,28 @@
       }
     };
 
-    // FUNGSI MENGHAPUS PESAN
-    window.clearChat = async function() {
-      const confirmDelete = confirm("Apakah kamu yakin ingin menghapus semua pesan?");
-      if (!confirmDelete) return;
+    // MODAL HAPUS PESAN
+    window.openClearModal = function() {
+      const modal = document.getElementById('clearConfirmModal');
+      if (modal) modal.classList.remove('hidden');
+    };
 
-      if (isOnlineMode && currentUser) {
+    window.closeClearModal = function() {
+      const modal = document.getElementById('clearConfirmModal');
+      if (modal) modal.classList.add('hidden');
+    };
+
+    window.confirmClearChat = async function() {
+      window.closeClearModal();
+
+      if (isOnlineMode && currentUser && db) {
         try {
-          for (const msg of state.messages) {
-            if (msg.docId) {
-              await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'chat_messages_cream', msg.docId));
-            }
-          }
+          const deletePromises = state.messages
+            .filter(msg => msg.docId && !msg.docId.startsWith('local_'))
+            .map(msg => deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'chat_messages_cream', msg.docId)));
+          await Promise.all(deletePromises);
+          state.messages = [];
+          renderMessages();
         } catch (error) {
           console.error("Gagal menghapus pesan online:", error);
         }
@@ -394,8 +445,7 @@
       }
     };
 
-
-    // FUNGSI UI LAINNYA
+    // FUNGSI UI & PERAN
     window.toggleSender = function() {
       state.activeSender = state.activeSender === 'user1' ? 'user2' : 'user1';
       updateUIForActiveUser();
@@ -403,21 +453,35 @@
 
     function updateUIForActiveUser() {
       const user = state.users[state.activeSender];
+      if (!user) return;
+
       const badge = document.getElementById('activeUserBadge');
-      badge.className = `flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border hover:scale-105 transition cursor-pointer ${user.colorBadge}`;
-      document.getElementById('activeUserAvatar').src = user.avatar;
-      document.getElementById('activeUserName').innerText = `${user.name} (${user.side === 'right' ? 'Kanan' : 'Kiri'})`;
+      if (badge) {
+        badge.className = `flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border hover:scale-105 transition cursor-pointer ${user.colorBadge}`;
+      }
+      const avatarEl = document.getElementById('activeUserAvatar');
+      if (avatarEl) avatarEl.src = user.avatar;
+      
+      const nameEl = document.getElementById('activeUserName');
+      if (nameEl) nameEl.innerText = `${user.name} (${user.side === 'right' ? 'Kanan' : 'Kiri'})`;
       
       const sendBtn = document.getElementById('sendBtn');
-      sendBtn.className = `p-3.5 text-white rounded-2xl font-medium shadow-lg transition flex items-center justify-center ${user.btnBg} disabled:opacity-60 disabled:cursor-not-allowed`;
+      if (sendBtn) {
+        sendBtn.className = `p-3.5 text-white rounded-2xl font-medium shadow-lg transition flex items-center justify-center ${user.btnBg} disabled:opacity-60 disabled:cursor-not-allowed`;
+      }
+
       const input = document.getElementById('messageInput');
-      input.placeholder = `Ketik pesan sebagai ${user.name}...`;
+      if (input) {
+        input.placeholder = `Ketik pesan sebagai ${user.name}...`;
+      }
     }
 
     window.toggleSound = function() {
       state.soundEnabled = !state.soundEnabled;
       const icon = document.getElementById('soundIcon');
-      icon.className = state.soundEnabled ? "w-4 h-4 text-amber-600" : "w-4 h-4 text-slate-300";
+      if (icon) {
+        icon.className = state.soundEnabled ? "w-4 h-4 text-amber-600" : "w-4 h-4 text-slate-300";
+      }
     };
 
     function playSound() {
@@ -445,6 +509,7 @@
 
     function renderMessages() {
       const container = document.getElementById('chatMessages');
+      if (!container) return;
       container.innerHTML = '';
 
       if (state.messages.length === 0) {
@@ -453,7 +518,7 @@
       }
 
       state.messages.forEach(msg => {
-        const sender = state.users[msg.senderId];
+        const sender = state.users[msg.senderId] || state.users['user1'];
         const isRight = sender.side === 'right';
         const wrapper = document.createElement('div');
         wrapper.className = `flex flex-col ${isRight ? 'items-end' : 'items-start'} my-1`;
@@ -465,18 +530,18 @@
         let checkColor = sender.isLightBubble ? 'text-amber-500/80' : 'text-emerald-200';
         let senderNameColor = sender.isLightBubble ? 'text-[#a89270] font-bold' : 'text-white/80 font-semibold';
 
-        let imageHTML = msg.image ? `<img src="${msg.image}" class="max-w-[220px] sm:max-w-[260px] max-h-[200px] object-cover rounded-xl mb-2 border-2 border-white/50 shadow-sm">` : '';
+        let imageHTML = msg.image ? `<img src="${msg.image}" class="max-w-[220px] sm:max-w-[260px] max-h-[200px] object-cover rounded-xl mb-2 border-2 border-white/50 shadow-sm" alt="Gambar Terlampir">` : '';
         let textHTML = msg.text ? `<p class="text-[14.5px] leading-relaxed whitespace-pre-wrap break-words">${escapeHtml(msg.text)}</p>` : '';
 
         wrapper.innerHTML = `
           <div class="flex items-end gap-2.5 max-w-[85%] ${isRight ? 'flex-row-reverse' : 'flex-row'} group">
-            <img src="${sender.avatar}" title="${sender.name}" class="w-7 h-7 rounded-full object-cover mb-1 border-2 border-white shadow-sm flex-shrink-0 transition-transform group-hover:scale-110">
+            <img src="${sender.avatar}" title="${sender.name}" class="w-7 h-7 rounded-full object-cover mb-1 border-2 border-white shadow-sm flex-shrink-0 transition-transform group-hover:scale-110" alt="${sender.name}">
             <div class="${bubbleClass} px-4 py-3 shadow-sm">
               <span class="block text-[10px] uppercase tracking-wider ${senderNameColor} mb-1">${sender.name}</span>
               ${imageHTML}
               ${textHTML}
               <div class="flex items-center justify-end gap-1.5 mt-1.5 text-[10px] ${timeColor}">
-                <span>${msg.time}</span>
+                <span>${msg.time || ''}</span>
                 <svg class="w-3.5 h-3.5 ${checkColor} inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7m-6 6l2 2l4-4"></path></svg>
               </div>
             </div>
@@ -494,7 +559,7 @@
       }, 50);
     }
 
-    // Image Upload handler
+    // Unggah dan Perkecil Ukuran Gambar
     window.handleImageSelect = function(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -517,8 +582,10 @@
           const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
 
           state.selectedImage = dataUrl;
-          document.getElementById('imagePreview').src = dataUrl;
-          document.getElementById('imagePreviewContainer').classList.remove('hidden');
+          const previewImg = document.getElementById('imagePreview');
+          const previewContainer = document.getElementById('imagePreviewContainer');
+          if (previewImg) previewImg.src = dataUrl;
+          if (previewContainer) previewContainer.classList.remove('hidden');
         }
         img.src = e.target.result;
       };
@@ -527,15 +594,20 @@
 
     window.cancelImage = function() {
       state.selectedImage = null;
-      document.getElementById('imagePreviewContainer').classList.add('hidden');
+      const previewContainer = document.getElementById('imagePreviewContainer');
+      const imageInput = document.getElementById('imageInput');
+      if (previewContainer) previewContainer.classList.add('hidden');
+      if (imageInput) imageInput.value = '';
     };
 
     window.toggleEmojiPicker = function() {
-      document.getElementById('emojiBar').classList.toggle('hidden');
+      const emojiBar = document.getElementById('emojiBar');
+      if (emojiBar) emojiBar.classList.toggle('hidden');
     };
 
     window.addEmoji = function(emoji) {
       const input = document.getElementById('messageInput');
+      if (!input) return;
       input.value += emoji;
       input.focus();
     };
@@ -543,6 +615,9 @@
     function escapeHtml(str) {
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
+
+    // Jalankan inisialisasi Firebase
+    initFirebaseApp();
   </script>
 </body>
 </html>
